@@ -1,0 +1,89 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Book Summary Outline</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; max-width: 700px; margin: auto; background: #f4f4f4; }
+    h1 { text-align: center; }
+    label { font-weight: bold; margin-top: 10px; display: block; }
+    textarea, input { width: 100%; padding: 8px; margin: 5px 0 15px; }
+    button { padding: 10px 15px; cursor: pointer; }
+    .controls { text-align: center; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h1>📚 Book Summary Outline</h1>
+  <form id="summaryForm">
+    <label>Book Title</label>
+    <input type="text" id="title" />
+
+    <label>Author</label>
+    <input type="text" id="author" />
+
+    <label>Main Characters</label>
+    <textarea id="characters" rows="3"></textarea>
+
+    <label>Plot Summary</label>
+    <textarea id="plot" rows="5"></textarea>
+
+    <label>Favorite Quotes</label>
+    <textarea id="quotes" rows="3"></textarea>
+
+    <label>Personal Takeaways</label>
+    <textarea id="takeaways" rows="3"></textarea>
+
+    <div class="controls">
+      <button type="button" onclick="saveSummary()">💾 Save</button>
+      <button type="button" onclick="clearForm()">🧹 Clear</button>
+      <button type="button" onclick="exportText()">📄 Export</button>
+    </div>
+  </form>
+
+  <script>
+    function saveSummary() {
+      const data = {
+        title: document.getElementById('title').value,
+        author: document.getElementById('author').value,
+        characters: document.getElementById('characters').value,
+        plot: document.getElementById('plot').value,
+        quotes: document.getElementById('quotes').value,
+        takeaways: document.getElementById('takeaways').value
+      };
+      localStorage.setItem('bookSummary', JSON.stringify(data));
+      alert("Summary saved!");
+    }
+
+    function clearForm() {
+      if (confirm("Clear all fields?")) {
+        document.getElementById('summaryForm').reset();
+      }
+    }
+
+    function exportText() {
+      const data = JSON.parse(localStorage.getItem('bookSummary')) || {};
+      let text = `Book Title: ${data.title || ''}\nAuthor: ${data.author || ''}\n\nCharacters:\n${data.characters || ''}\n\nPlot:\n${data.plot || ''}\n\nQuotes:\n${data.quotes || ''}\n\nTakeaways:\n${data.takeaways || ''}`;
+      const blob = new Blob([text], { type: "text/plain" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${data.title || 'book'}_summary.txt`;
+      a.click();
+    }
+
+    window.onload = () => {
+      const saved = JSON.parse(localStorage.getItem('bookSummary'));
+      if (saved) {
+        document.getElementById('title').value = saved.title || '';
+        document.getElementById('author').value = saved.author || '';
+        document.getElementById('characters').value = saved.characters || '';
+        document.getElementById('plot').value = saved.plot || '';
+        document.getElementById('quotes').value = saved.quotes || '';
+        document.getElementById('takeaways').value = saved.takeaways || '';
+      }
+    }
+  </script>
+</body>
+</html>
